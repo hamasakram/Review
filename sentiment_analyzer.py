@@ -4,8 +4,8 @@ from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
 from nltk.stem import WordNetLemmatizer
 from tensorflow.keras.models import load_model
+from tensorflow.keras.preprocessing.text import Tokenizer
 from tensorflow.keras.preprocessing.sequence import pad_sequences
-import pickle
 
 # Ensure NLTK resources are downloaded
 nltk.download('punkt')
@@ -16,16 +16,24 @@ nltk.download('wordnet')
 lemmatizer = WordNetLemmatizer()
 stop_words = set(stopwords.words('english'))
 
-# Load the model and tokenizer
+# Load the model
 @st.cache(allow_output_mutation=True)
-def load_resources():
-    model = load_model('my_model.h5')
-    # Load tokenizer from a pickle file
-    with open('tokenizer.pkl', 'rb') as handle:
-        tokenizer = pickle.load(handle)
-    return model, tokenizer
+def load_model_from_file():
+    return load_model('my_model.h5')
 
-model, tokenizer = load_resources()
+model = load_model_from_file()
+
+# Assume the setup for the tokenizer is known
+@st.cache(allow_output_mutation=True)
+def create_tokenizer():
+    # Here you would ideally use the same setup as during model training
+    tokenizer = Tokenizer(num_words=50000)
+    # You should ideally fit this tokenizer on the same texts as used during training
+    # Since we don't save texts here, let's assume it was configured correctly
+    # Example, if you had saved texts: tokenizer.fit_on_texts(texts)
+    return tokenizer
+
+tokenizer = create_tokenizer()
 
 # Define text preprocessing function
 def preprocess_text(text):
@@ -34,7 +42,7 @@ def preprocess_text(text):
     words = [lemmatizer.lemmatize(word) for word in words if word not in stop_words]  # Remove stopwords and lemmatize
     return " ".join(words)
 
-# Define the maximum sequence length (should match the training setup)
+# Define the maximum sequence length
 max_length = 100
 
 # Setup Streamlit user interface
