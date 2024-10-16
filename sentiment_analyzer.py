@@ -7,6 +7,10 @@ from nltk.tokenize import word_tokenize
 from nltk.stem import WordNetLemmatizer
 
 # Function to download NLTK data if not already present
+# Set the proxy server without authentication
+nltk.set_proxy('http://proxy.mycompany.com:8080')  # Replace with your actual proxy URL and port
+
+# Function to download NLTK data if not already present
 def download_nltk_data():
     try:
         nltk.data.find('tokenizers/punkt')
@@ -21,7 +25,8 @@ def download_nltk_data():
     except LookupError:
         nltk.download('wordnet')
 
-download_nltk_data()  # Call this function on startup
+# Call this function to download NLTK data on startup
+download_nltk_data()
 
 # Load your trained model
 @st.cache(allow_output_mutation=True)
